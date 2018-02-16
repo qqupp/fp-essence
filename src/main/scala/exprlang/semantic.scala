@@ -3,7 +3,7 @@ package exprlang
 import abstractSyntax._
 import semanticDomain._
 import environment._
-import monad.Monad
+import typec.{Monad, Showable}
 
 object semantic {
 
@@ -13,8 +13,7 @@ object semantic {
   }
 
   def semApply[M[_]](eFun: Value, eVal: Value)(implicit m: Monad[M]): M[Value] = (eFun, eVal) match {
-    //case (_, Wrong) => m.unitM(Wrong)
-    case (Fun(f),v) => f(v).asInstanceOf[M[Value]] // to fix it returns a Any type
+    case (Fun(f),v) => f(v).asInstanceOf[M[Value]] // to fix the conversion  it returns a Any type
     case _ => m.unitM(Wrong)
   }
 
@@ -32,7 +31,7 @@ object semantic {
           Fun(
             (v: Value) => interpret(term)(bind(name)(v)(e)))
         }
-      case App(t1,t2) =>
+      case Appl(t1,t2) =>
         m.bindM( interpret(t1)(e) ) { eFun =>
           m.bindM( interpret(t2)(e) ) { eVal =>
             semApply(eFun, eVal)
@@ -46,8 +45,10 @@ object semantic {
     case Num(i) => i.toString
   }
 
-  def test[M[_]](t: Term)(implicit m: Monad[M]): String =
-    m.showM(m.bindM(
-      interpret(t)(emptyEnv[M]))( x => m.unitM(showVal(x)))
-    )
+  def test[M[_]](t: Term)(implicit m: Monad[M], s: Showable[M[String]]): String = {
+    val mTerm: M[String] = m.bindM(
+      interpret(t)(emptyEnv[M]))(x => m.unitM(showVal(x)))
+    s.showM(mTerm)
+  }
+
 }
