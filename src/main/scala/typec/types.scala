@@ -12,3 +12,7 @@ trait Showable[T] {
 trait Errorable[M[_]] {
   def errorM[V](v: V, message: String): M[V]
 }
+
+trait Resettable[M[_]] {
+  def resetM[V](p: Int)(m: M[V]): M[V]
+}
