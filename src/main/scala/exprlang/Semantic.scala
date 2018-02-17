@@ -3,7 +3,7 @@ package exprlang
 import AbstractSyntax._
 import SemanticDomain._
 import Environment._
-import typec.{Errorable, Monad, Showable}
+import typec.{Errorable, Monad, Resettable, Showable}
 
 object Semantic {
 
@@ -23,7 +23,8 @@ object Semantic {
     }
 
   def interpret[M[_]](t: Term)(e: Environment[M])(implicit m: Monad[M],
-                                                  er: Errorable[M]): M[Value] =
+                                                  er: Errorable[M],
+                                                  res: Resettable[M]): M[Value] =
     t match {
       case Var(name) => lookup(name)(e)
       case Con(int) => m.unitM(Num(int))
@@ -48,6 +49,7 @@ object Semantic {
           interpret(t1)(e)
         else
           interpret(t2)(e)
+      case At(p, t) => res.resetM(p)(interpret(t)(e))
     }
 
   def showVal(v: Value): String = v match {
@@ -56,8 +58,8 @@ object Semantic {
     case Num(i) => i.toString
   }
 
-  def test[M[_]](t: Term)(implicit m: Monad[M], s: Showable[M[Value]],
-                          er: Errorable[M]): String = {
+  def interpretTerm[M[_]](t: Term)(implicit m: Monad[M], s: Showable[M[Value]],
+                                   er: Errorable[M], res: Resettable[M]): String = {
     val mTerm: M[Value] = interpret(t)(emptyEnv[M])
     s.showM(mTerm)
   }
