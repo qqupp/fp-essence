@@ -1,5 +1,7 @@
 package exprlang
 
+import scala.language.higherKinds
+
 object SemanticDomain {
 
   sealed trait Value

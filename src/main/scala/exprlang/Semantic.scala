@@ -4,6 +4,7 @@ import AbstractSyntax._
 import SemanticDomain._
 import Environment._
 import typec.{Errorable, Monad, Resettable, Showable}
+import scala.language.higherKinds
 
 object Semantic {
 

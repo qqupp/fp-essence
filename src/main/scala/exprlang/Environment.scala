@@ -3,6 +3,7 @@ package exprlang
 import SemanticDomain._
 import AbstractSyntax._
 import typec.{Errorable, Monad}
+import scala.language.higherKinds
 
 object Environment {
   type Environment[M[_]] = Name => M[Value]

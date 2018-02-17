@@ -1,4 +1,5 @@
 package typec
+import scala.language.higherKinds
 
 trait Monad[M[_]] {
   def unitM[A](a: A): M[A]

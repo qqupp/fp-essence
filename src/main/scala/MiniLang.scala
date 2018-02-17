@@ -3,6 +3,7 @@ import exprlang.Semantic._
 import exprlang.SemanticDomain.Value
 import typec._
 import Terms._
+import scala.language.higherKinds
 
 object MiniLang extends App{
 
