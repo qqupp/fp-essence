@@ -4,7 +4,18 @@ object AbstractSyntax {
 
   type Name = String
 
-  sealed trait Term
+  sealed trait Term {
+    override def toString: String = this match {
+      case Var(n) => n
+      case Con(i) => i.toString
+      case Add(t1, t2) => s"(${t1.toString} + ${t2.toString})"
+      case Lam(n, t) => s"λ$n.${t.toString}"
+      case Appl(t1, t2) => s"(${t1.toString})(${t2.toString})"
+      case IfzThenElse(t0, t1, t2) => s"if (${t0.toString} == 0) then (${t1.toString}) else (${t2.toString})"
+      case At(p, t) => s"""\nLine $p: ${t.toString}"""
+    }
+  }
+
   case class Var(name: Name) extends Term
   case class Con(i: Int) extends Term
   case class Add(t1: Term, t2: Term) extends Term
