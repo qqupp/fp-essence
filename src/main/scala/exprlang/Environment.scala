@@ -1,14 +1,14 @@
 package exprlang
 
-import semanticDomain._
-import abstractSyntax._
-import typec.Monad
+import SemanticDomain._
+import AbstractSyntax._
+import typec.{Errorable, Monad}
 
-object environment {
+object Environment {
   type Environment[M[_]] = Name => M[Value]
 
-  def emptyEnv[M[_]](implicit m: Monad[M]): Environment[M] =
-    x => m.unitM(Wrong)
+  def emptyEnv[M[_]](implicit m: Monad[M], e: Errorable[M]): Environment[M] =
+    x => e.errorM(Wrong, s"unbound variable: $x")
 
   def lookup[M[_]](name: Name)(env: Environment[M])(implicit m: Monad[M]) =
     env(name)
