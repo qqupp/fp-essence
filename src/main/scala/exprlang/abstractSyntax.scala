@@ -11,4 +11,5 @@ object abstractSyntax {
   case class Lam(name: Name, t: Term) extends Term
   case class Appl(t1: Term, t2: Term) extends Term
 
+  case class IfzThenElse(t0: Term, t1: Term, t2: Term) extends Term
 }

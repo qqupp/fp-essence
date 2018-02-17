@@ -37,6 +37,11 @@ object semantic {
             semApply(eFun, eVal)
           }
         }
+      case IfzThenElse(t0, t1, t2) =>
+        if (interpret(t0)(e) == m.unitM(Num(0)))
+          interpret(t1)(e)
+        else
+          interpret(t2)(e)
     }
 
   def showVal(v: Value): String = v match {
@@ -45,9 +50,8 @@ object semantic {
     case Num(i) => i.toString
   }
 
-  def test[M[_]](t: Term)(implicit m: Monad[M], s: Showable[M[String]]): String = {
-    val mTerm: M[String] = m.bindM(
-      interpret(t)(emptyEnv[M]))(x => m.unitM(showVal(x)))
+  def test[M[_]](t: Term)(implicit m: Monad[M], s: Showable[M[Value]]): String = {
+    val mTerm: M[Value] = interpret(t)(emptyEnv[M])
     s.showM(mTerm)
   }
 
