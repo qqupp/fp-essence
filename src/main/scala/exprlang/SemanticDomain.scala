@@ -1,6 +1,6 @@
 package exprlang
 
-object semanticDomain {
+object SemanticDomain {
 
   sealed trait Value
   case object Wrong extends Value

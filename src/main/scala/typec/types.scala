@@ -8,3 +8,7 @@ trait Monad[M[_]] {
 trait Showable[T] {
   def showM(v: T): String
 }
+
+trait Errorable[M[_]] {
+  def errorM[V](v: V, message: String): M[V]
+}

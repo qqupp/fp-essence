@@ -1,6 +1,6 @@
 package exprlang
 
-object abstractSyntax {
+object AbstractSyntax {
 
   type Name = String
 
