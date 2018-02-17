@@ -11,8 +11,8 @@ object MiniLang extends App{
                                                          er: Errorable[T],
                                                          res: Resettable[T]) =
     println(
-      (title :: termList.map( term => interpretTerm(term))).mkString("", "\n", "\n")
-    )
+      (title :: termList.map( term =>
+        "\nTerm: " + term.toString + "  Result= " + interpretTerm(term))).mkString("", "\n", "\n\n"))
 
   import instances.VariationTwo._
   runTest("Variation Two: Position => Error Monad")(testTerms ++ posTerms)
