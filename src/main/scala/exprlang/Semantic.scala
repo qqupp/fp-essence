@@ -18,8 +18,8 @@ object Semantic {
 
   def semApply[M[_]](eFun: Value, eVal: Value)(implicit m: Monad[M],
                                                e: Errorable[M]): M[Value] =
-    (eFun, eVal) match {
-      case (Fun(f),v) => f(v).asInstanceOf[M[Value]] // to fix the conversion  it returns a Any type
+    eFun match {
+      case fu: Fun[M] => fu match { case Fun(f) => f(eVal) }
       case _ => e.errorM(Wrong, s"should be function: ${showVal(eFun)}")
     }
 
