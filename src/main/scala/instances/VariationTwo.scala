@@ -1,7 +1,7 @@
 package instances
 
 import exprlang.SemanticDomain.Value
-import typec.{Errorable, Monad, Resettable, Showable}
+import typec._
 
 
 object VariationTwo {
@@ -11,11 +11,12 @@ object VariationTwo {
   type PositionM[T] = Int => ErrorM[T]
 
   implicit val interpreterWithPosition = new Monad[PositionM] with Errorable[PositionM]
-    with Showable[PositionM[Value]] with Resettable[PositionM]{
+    with Showable[PositionM[Value]] with Resettable[PositionM] with Exposable[PositionM]{
 
     val mErrM = implicitly[Monad[ErrorM]]
     val mErrE = implicitly[Errorable[ErrorM]]
     val mShow = implicitly[Showable[ErrorM[Value]]]
+    val mExpo = implicitly[Exposable[ErrorM]]
 
     override def unitM[A](a: A) =
       (_: Int) => mErrM.unitM(a)
@@ -31,5 +32,7 @@ object VariationTwo {
 
     override def resetM[V](p: Int)(m: PositionM[V]) =
       (_: Int) => m(p)
+
+    override def expose[T](v: PositionM[T]) = mExpo.expose(v(0))
   }
 }

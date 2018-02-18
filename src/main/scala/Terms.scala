@@ -12,7 +12,7 @@ object Terms {
       Add(Con(10), Con(11))
     )
 
-  val ifTerm = IfzThenElse(Add(Con(2),Con(1)), term0, term1)
+  val ifTerm = IfzThenElse(Add(Con(2),Con(-2)), term0, term1)
 
   val wrongTerm0 = Appl(Con(10),Con(2))
   val wrongTerm1 = Var("x")

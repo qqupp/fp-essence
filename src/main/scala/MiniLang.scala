@@ -10,7 +10,8 @@ object MiniLang extends App{
   def runTest[T[_]](title: String)(termList: List[Term])(implicit m: Monad[T],
                                                          s: Showable[T[Value]],
                                                          er: Errorable[T],
-                                                         res: Resettable[T]) =
+                                                         res: Resettable[T],
+                                                         expo: Exposable[T]) =
     println(
       (title :: termList.map( term =>
         "\nTerm: " + term.toString + "  Result= " + interpretTerm(term))).mkString("", "\n", "\n\n"))

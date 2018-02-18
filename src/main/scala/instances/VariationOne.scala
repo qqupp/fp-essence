@@ -1,8 +1,9 @@
 package instances
 
 import exprlang.SemanticDomain.Value
-import typec.{Errorable, Monad, Showable}
+import typec.{Errorable, Exposable, Monad, Showable}
 import exprlang.Semantic._
+
 import scala.language.higherKinds
 
 object VariationOne {
@@ -11,7 +12,8 @@ object VariationOne {
   case class Success[T](v: T) extends ErrorM[T]
   case class Error[T](e: String) extends ErrorM[T]
 
-  implicit val interpreterWithErrors = new Monad[ErrorM] with Showable[ErrorM[Value]] with Errorable[ErrorM] {
+  implicit val interpreterWithErrors = new Monad[ErrorM] with Showable[ErrorM[Value]]
+    with Errorable[ErrorM] with Exposable[ErrorM]{
 
     override def unitM[A](a: A) = Success(a)
 
@@ -26,5 +28,10 @@ object VariationOne {
     }
 
     override def errorM[V](v: V, message: String) = Error(message)
+
+    override def expose[T](v: ErrorM[T]) = v match {
+      case Success(s) => Some(s)
+      case _ => None
+    }
   }
 }

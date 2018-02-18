@@ -17,3 +17,7 @@ trait Errorable[M[_]] {
 trait Resettable[M[_]] {
   def resetM[V](p: Int)(m: M[V]): M[V]
 }
+
+trait Exposable[M[_]] {
+  def expose[T](v: M[T]): Option[T]
+}
