@@ -3,7 +3,6 @@ package instances
 import exprlang.SemanticDomain.Value
 import typec.{Errorable, Exposable, Monad, Showable}
 import exprlang.Semantic._
-
 import scala.language.higherKinds
 
 object VariationOne {

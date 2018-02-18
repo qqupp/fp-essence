@@ -1,11 +1,10 @@
 package exprlang
 
+import scala.language.higherKinds
 import AbstractSyntax._
 import SemanticDomain._
 import Environment._
 import typec._
-
-import scala.language.higherKinds
 
 object Semantic {
 
@@ -18,7 +17,7 @@ object Semantic {
     }
 
   def semApply[M[_]](eFun: Value, eVal: Value)(implicit m: Monad[M],
-                                               e: Errorable[M], expo: Exposable[M]): M[Value] =
+                                               e: Errorable[M]): M[Value] =
     eFun match {
       case fu: Fun[M] => fu match { case Fun(f) => f(eVal) }
       case _ => e.errorM(Wrong, s"should be function: ${showVal(eFun)}")
@@ -27,7 +26,7 @@ object Semantic {
   def interpret[M[_]](t: Term)(e: Environment[M])(implicit m: Monad[M],
                                                   er: Errorable[M],
                                                   res: Resettable[M],
-                                                  expose: Exposable[M]): M[Value] =
+                                                  exp: Exposable[M]): M[Value] =
     t match {
       case Var(name) => lookup(name)(e)
       case Con(int) => m.unitM(Num(int))
@@ -47,13 +46,11 @@ object Semantic {
             semApply(eFun, eVal)
           }
         }
-      case IfzThenElse(t0, t1, t2) => {
-        val testN = expose.expose(interpret(t0)(e))
-        if ( testN == Some(Num(0)))
+      case IfzThenElse(t0, t1, t2) =>
+        if (exp.expose(interpret(t0)(e)) == Some(Num(0)))
           interpret(t1)(e)
         else
           interpret(t2)(e)
-      }
       case At(p, t) => res.resetM(p)(interpret(t)(e))
     }
 
@@ -64,7 +61,7 @@ object Semantic {
   }
 
   def interpretTerm[M[_]](t: Term)(implicit m: Monad[M], s: Showable[M[Value]],
-                                   er: Errorable[M], res: Resettable[M], expo: Exposable[M]): String = {
+                                   er: Errorable[M], res: Resettable[M], exp: Exposable[M]): String = {
     val mTerm: M[Value] = interpret(t)(emptyEnv[M])
     s.showM(mTerm)
   }

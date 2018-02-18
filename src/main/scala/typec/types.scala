@@ -1,4 +1,5 @@
 package typec
+
 import scala.language.higherKinds
 
 trait Monad[M[_]] {
