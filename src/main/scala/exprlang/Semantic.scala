@@ -1,10 +1,10 @@
 package exprlang
 
+import scala.language.higherKinds
 import AbstractSyntax._
 import SemanticDomain._
 import Environment._
-import typec.{Errorable, Monad, Resettable, Showable}
-import scala.language.higherKinds
+import typec._
 
 object Semantic {
 
@@ -25,7 +25,8 @@ object Semantic {
 
   def interpret[M[_]](t: Term)(e: Environment[M])(implicit m: Monad[M],
                                                   er: Errorable[M],
-                                                  res: Resettable[M]): M[Value] =
+                                                  res: Resettable[M],
+                                                  exp: Exposable[M]): M[Value] =
     t match {
       case Var(name) => lookup(name)(e)
       case Con(int) => m.unitM(Num(int))
@@ -46,7 +47,7 @@ object Semantic {
           }
         }
       case IfzThenElse(t0, t1, t2) =>
-        if (interpret(t0)(e) == m.unitM(Num(0)))
+        if (exp.expose(interpret(t0)(e)) == Some(Num(0)))
           interpret(t1)(e)
         else
           interpret(t2)(e)
@@ -60,7 +61,7 @@ object Semantic {
   }
 
   def interpretTerm[M[_]](t: Term)(implicit m: Monad[M], s: Showable[M[Value]],
-                                   er: Errorable[M], res: Resettable[M]): String = {
+                                   er: Errorable[M], res: Resettable[M], exp: Exposable[M]): String = {
     val mTerm: M[Value] = interpret(t)(emptyEnv[M])
     s.showM(mTerm)
   }
